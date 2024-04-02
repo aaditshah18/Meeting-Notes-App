@@ -1,5 +1,6 @@
 import * as meetingNoteService from './../services/meeting-notes-services.js';
 import { setResponse, setCreateResponse, setDeleteResponse, setError } from './response-handler.js';
+import MeetingNotes from '../models/meeting-notes-models.js'
 
 /**
  * Controller function to search meeting notes based on query parameters.
@@ -61,7 +62,13 @@ export const search = async (request, response) => {
  */
 export const post = async (request, response) => {
     try {
+        let latestNoteId=0;
         const noteData = { ...request.body };
+        const latestNote = await MeetingNotes.findOne({}, {}, { sort: { 'noteId': -1 } });
+        if (latestNote) {
+            latestNoteId = latestNote.noteId + 1;
+          }
+        noteData["noteId"] = latestNoteId;
         const newNote = await meetingNoteService.save(noteData);
         setCreateResponse(newNote, response);
     } catch (error) {
