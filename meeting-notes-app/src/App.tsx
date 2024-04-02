@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import {Note, fetchNotes} from "./api/notes";
+import {NoteType, fetchNotes} from "./api/notes";
 import NoteList from './components/NoteList';
+import MainTitle from './components/MainTitle';
 
 function App() {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<NoteType[]>([]);
 
   useEffect(() => {
     fetchNotes().then(res => {
@@ -16,16 +17,9 @@ function App() {
     });
   }, [])
 
-  if (notes.length === 0) {
-    return (
-      <div>
-        This is empty
-      </div>
-    )
-  }
-
   return (
-    <div>
+    <div className='main'>
+      <MainTitle />
       <NoteList data={notes} />
     </div>
   )

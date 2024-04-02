@@ -1,4 +1,4 @@
-export type Note = {
+export type NoteType = {
     _id: string
     noteId: number
     title: string
@@ -15,7 +15,7 @@ export type Note = {
 export const fetchNotes = async () => {
     try {
         const res = await fetch("/api");
-        const data: Note[] = await res.json();
+        const data: NoteType[] = await res.json();
 
         return {
             result: true,
@@ -25,6 +25,69 @@ export const fetchNotes = async () => {
         return {
             result: false,
             data: [],
+        }
+    }
+}
+
+export const fetchParticularNote = async (id: String) => {
+    try {
+        const res = await fetch(`/api/${id}`);
+        const data: NoteType = await res.json();
+
+        return {
+            result: true,
+            data,
+        }
+    } catch (e) {
+        return {
+            result: false,
+            data: null,
+        }
+    }
+}
+
+
+export const createNewNote = async (body: NoteType) => {
+    try {
+        const res = await fetch("/api", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json' // Set content type to JSON
+            },
+            body: JSON.stringify(body)
+        });
+        const data: NoteType = await res.json();
+        return {
+            result: true,
+            data,
+        }
+    } catch (e) {
+        return {
+            result: false,
+            data: null,
+        }
+    }
+}
+
+export const updateExistingNote = async (body: NoteType, id: String) => {
+    try {
+        const res = await fetch(`/api/${id}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json' // Set content type to JSON
+            },
+            body: JSON.stringify(body),
+        });
+        const data: NoteType = await res.json();
+
+        return {
+            result: true,
+            data,
+        }
+    } catch (e) {
+        return {
+            result: false,
+            data: null,
         }
     }
 }
