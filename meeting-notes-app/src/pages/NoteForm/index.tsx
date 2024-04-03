@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchParticularNote, createNewNote, updateExistingNote} from '../../api/notes';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { Box, Button, Checkbox, TextField } from '@mui/material';
+import MainTitle from "../../components/MainTitle"
+
 const ActionItemsInput = ({control}: {control: any}) => {
   const { fields, append, remove } = useFieldArray({
     control,
@@ -108,54 +110,57 @@ export default function NoteForm() {
       console.log('Calling the Create API', formData);
       createNewNote(formData);
     }
-    navigate("/");
+    window.location.href = '/';
   };
 
   return (
-    <Box padding={12}>
-      <h1>{id ? "Edit Note" : "Add Note"}</h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Box marginBottom={4}>
-          <Controller
-            name="title"
-            control={control}
-            defaultValue=""
-            rules={{ required: true }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Title"
-                fullWidth
-                error={!!errors.title}
-                helperText={errors.title ? 'Title is required' : ''}
-              />
-            )}
-          />
-        </Box>
-        <Box marginBottom={4}>
-           <Controller
-            name="content"
-            control={control}
-            defaultValue=""
-            rules={{ required: true }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Content"
-                multiline
-                rows={4}
-                fullWidth
-                error={!!errors.content}
-                helperText={errors.content ? 'Content is required' : ''}
-              />
-            )}
-          />
-        </Box>
-        <ActionItemsInput control={control} />
-        <Box display="flex" justifyContent="end">
-          <Button type="submit" variant="contained">Submit</Button>
-        </Box>
-      </form>
+    <Box height="100vh">
+      <MainTitle/>
+      <Box paddingX={12}>
+        <h1>{id ? "Edit Note" : "Add Note"}</h1>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box marginBottom={4}>
+            <Controller
+              name="title"
+              control={control}
+              defaultValue=""
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Title"
+                  fullWidth
+                  error={!!errors.title}
+                  helperText={errors.title ? 'Title is required' : ''}
+                />
+              )}
+            />
+          </Box>
+          <Box marginBottom={4}>
+            <Controller
+              name="content"
+              control={control}
+              defaultValue=""
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Content"
+                  multiline
+                  rows={4}
+                  fullWidth
+                  error={!!errors.content}
+                  helperText={errors.content ? 'Content is required' : ''}
+                />
+              )}
+            />
+          </Box>
+          <ActionItemsInput control={control} />
+          <Box display="flex" justifyContent="end">
+            <Button type="submit" variant="contained">Submit</Button>
+          </Box>
+        </form>
+      </Box>
     </Box>
   );
 };
