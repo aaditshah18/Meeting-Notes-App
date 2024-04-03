@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { NoteType, fetchParticularNote, createNewNote, updateExistingNote} from '../../api/notes';
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchParticularNote, createNewNote, updateExistingNote} from '../../api/notes';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { Box } from '@mui/material';
-
+import { Box, Button, Checkbox, TextField } from '@mui/material';
 const ActionItemsInput = ({control}: {control: any}) => {
   const { fields, append, remove } = useFieldArray({
     control,
@@ -13,54 +12,52 @@ const ActionItemsInput = ({control}: {control: any}) => {
   return (
     <Box>
       {fields.map((field, index) => (
-        <Box key={field.id}>
-          <Box display="flex">
-            <div>
-              <Controller
-                render={({ field }) => (
-                  <>
-                    <input
+        <Box key={field.id} marginBottom={2}>
+          <Box display="flex" justifyContent="space-between">
+            <Box display="flex" flexGrow={1}>
+              <div>
+                <Controller
+                  render={({ field }) => (
+                    <Checkbox 
                       {...field}
-                      type="checkbox"
-                      value="completed"
                       checked={!!field.value}
                     />
-                  </>
-                )}
-                name={`actionItems.${index}.completed`}
-                control={control}
-              />
-            </div>
-            <div>
-              <Controller
-                render={({ field }) => (
-                  <>
-                    <input
-                      {...field}
-                      className="form-control mb-4"
-                      placeholder="add your action item here"
-                    />
-                  </>
-                )}
-                rules={{ required: true }}
-                name={`actionItems.${index}.text`}
-                control={control}
-              />
-            </div>
-            <div>
-              <button onClick={() => remove(index)}>
+                  )}
+                  name={`actionItems.${index}.completed`}
+                  control={control}
+                />
+              </div>
+              <Box flexGrow={1}>
+                <Controller
+                  render={({ field }) => (
+                      <TextField
+                        {...field}
+                        fullWidth
+                        placeholder='Add action item here'
+                      />
+                  )}
+                  rules={{ required: true }}
+                  name={`actionItems.${index}.text`}
+                  control={control}
+                />
+              </Box>
+            </Box>
+            <Box marginLeft={2} display="flex" justifyContent="center">
+              <Button onClick={() => remove(index)} variant="outlined" color="error">
                   Remove
-              </button>
-            </div>
+              </Button>
+            </Box>
           </Box>
         </Box>
       ))}
-      <button onClick={() => append({
+      <Button
+        onClick={() => append({
           text: "",
-          completed: "completed",
-        })}>
+          completed: false,
+        })}
+      >
         Add Item
-      </button>
+      </Button>
     </Box>
   )
 }
@@ -78,7 +75,7 @@ export default function NoteForm() {
     }
   });
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -111,34 +108,54 @@ export default function NoteForm() {
       console.log('Calling the Create API', formData);
       createNewNote(formData);
     }
+    navigate("/");
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h1>THIS IS NOTE PAGE</h1>
- 
-      <Box>
-        <input
-          type="text"
-          placeholder="Title"
-          {...register('title', { required: true })}
-        />
-        <div>{errors.title && <span>Title is required</span>} {/* Error message for required title */}</div>
-      </Box>
-      {/* TextArea */}
-      <Box>
-        <textarea
-          placeholder="Note Content"
-          {...register('content', { required: true })}
-        />
-        <div>{errors.content && <span>Note content is required</span>}</div>
-      </Box> 
-      {/* ActionItemList */}
-      {/* Render action items input fields here */}
-      <ActionItemsInput control={control} />
-
-    {/*SubmitButton - This is a basic submit button to trigger handleSubmit when clicked  */}
-      <button type="submit">Submit</button>
-    </form>
+    <Box padding={12}>
+      <h1>{id ? "Edit Note" : "Add Note"}</h1>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box marginBottom={4}>
+          <Controller
+            name="title"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Title"
+                fullWidth
+                error={!!errors.title}
+                helperText={errors.title ? 'Title is required' : ''}
+              />
+            )}
+          />
+        </Box>
+        <Box marginBottom={4}>
+           <Controller
+            name="content"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Content"
+                multiline
+                rows={4}
+                fullWidth
+                error={!!errors.content}
+                helperText={errors.content ? 'Content is required' : ''}
+              />
+            )}
+          />
+        </Box>
+        <ActionItemsInput control={control} />
+        <Box display="flex" justifyContent="end">
+          <Button type="submit" variant="contained">Submit</Button>
+        </Box>
+      </form>
+    </Box>
   );
 };

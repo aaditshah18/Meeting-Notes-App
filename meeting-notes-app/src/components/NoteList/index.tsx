@@ -21,57 +21,61 @@ const Note = (props: NoteProps) => {
     const {divider = false} = props;
 
     return (
-      <ListItem 
-        alignItems="flex-start"
-        divider={divider}
-      >
-        <ListItemButton role={undefined} dense>
-          <Link to={`/note/${n.noteId}`}>
-            <ListItemText
-              primary={
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                >
-                  <Typography
-                    color="text.primary"
+      <Link to={`/note/${n.noteId}`}>
+        <ListItem 
+          alignItems="flex-start"
+          divider={divider}
+        >
+          <ListItemButton role={undefined} dense>
+              <ListItemText
+                primary={
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
                   >
-                    {n.title}
-                  </Typography>
+                    <Box>
+                      <Typography
+                        color="text.primary"
+                      >
+                        {n.title}
+                      </Typography>
+                    </Box>
 
-                  <Typography color="GrayText">
-                    {new Date(n.creationDate).toDateString()}
-                  </Typography>
-                </Box>
-              }
-              secondary={
-                <>
-                  <Typography
-                    sx={{ display: 'block' }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    {n.content}
-                    </Typography>
-                    {n.actionItems.map(action => (
+                    <Box>
+                      <Typography color="GrayText">
+                        {new Date(n.creationDate).toDateString()}
+                      </Typography>
+                    </Box>
+                  </Box>
+                }
+                secondary={
+                  <Box width="100%">
                     <Typography
-                      key={action._id}
                       sx={{ display: 'block' }}
                       component="span"
                       variant="body2"
-                      color={action.completed ? 'secondary' : 'text.primary'}
+                      color="text.primary"
                     >
-                      <input type="checkbox" checked={action.completed} readOnly />
-                      <label>{action.text}</label>
-                    </Typography>
-                  ))}
-                </>
-              }
-            />
-          </Link>
-        </ListItemButton>
-      </ListItem>
+                      {n.content}
+                      </Typography>
+                      {n.actionItems.map(action => (
+                      <Typography
+                        key={action._id}
+                        sx={{ display: 'block' }}
+                        component="span"
+                        variant="body2"
+                        color={action.completed ? 'secondary' : 'text.primary'}
+                      >
+                        <input type="checkbox" checked={action.completed} readOnly />
+                        <label>{action.text}</label>
+                      </Typography>
+                    ))}
+                  </Box>
+                }
+              />
+          </ListItemButton>
+        </ListItem>
+      </Link>
     )
 }
 
