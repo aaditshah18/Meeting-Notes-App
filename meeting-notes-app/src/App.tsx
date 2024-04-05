@@ -19,7 +19,7 @@ function App() {
 
   return (
     <div className='main'>
-      <MainTitle />
+      <MainTitle onSearch={(notes) => setNotes(notes)} />
       <NoteList data={notes} />
     </div>
   )

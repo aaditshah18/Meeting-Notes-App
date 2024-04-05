@@ -13,7 +13,7 @@ export const search = async (request, response) => {
         const queryParams = { ...request.query };
 
         // Extracting search criteria from query parameters
-        const { title, content, actionItemText, startDate, endDate } = queryParams;
+        const { title, content, actionItemText, startDate, endDate, searchData } = queryParams;
 
         // Constructing the search query
         const searchQuery = {};
@@ -42,13 +42,23 @@ export const search = async (request, response) => {
             searchQuery.creationDate = { $gte: startDateObj, $lt: endDateObj };
         }
 
+        if (searchData) {
+            const regexPattern = new RegExp(searchData, 'i'); // Create a RegExp object with 'i' flag for case-insensitive search
+            searchQuery.$or = [
+                { title: { $regex: regexPattern } }, // Search title
+                { content: { $regex: regexPattern } }, // Search content
+                { 'actionItems.text': { $regex: regexPattern } } // Search action item text
+                
+            ];
+        }
+
         // Perform the search using the constructed query
         const notes = await meetingNoteService.search(searchQuery);
 
         // Send the search results as response
         setResponse(notes, response);
     } catch (error) {
-        // Handle errors
+        console.log(error);
         setError(response);
     }
 }

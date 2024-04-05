@@ -5,6 +5,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import { Link } from "react-router-dom";
+import Checkbox from '@mui/material/Checkbox';
+
 
 
 interface NodeListProps {
@@ -50,27 +52,27 @@ const Note = (props: NoteProps) => {
                 }
                 secondary={
                   <Box width="100%">
+                  <Typography
+                    sx={{ display: 'block' }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    {n.content}
+                  </Typography>
+                  {n.actionItems.map(action => (
                     <Typography
+                      key={action._id}
                       sx={{ display: 'block' }}
                       component="span"
                       variant="body2"
-                      color="text.primary"
+                      color={action.completed ? 'secondary' : 'text.primary'}
                     >
-                      {n.content}
-                      </Typography>
-                      {n.actionItems.map(action => (
-                      <Typography
-                        key={action._id}
-                        sx={{ display: 'block' }}
-                        component="span"
-                        variant="body2"
-                        color={action.completed ? 'secondary' : 'text.primary'}
-                      >
-                        <input type="checkbox" checked={action.completed} readOnly />
-                        <label>{action.text}</label>
-                      </Typography>
-                    ))}
-                  </Box>
+                      <Checkbox checked={action.completed} readOnly />
+                      <label>{action.text}</label>
+                    </Typography>
+                  ))}
+                </Box>
                 }
               />
           </ListItemButton>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { fetchParticularNote, createNewNote, updateExistingNote} from '../../api/notes';
+import { useParams } from 'react-router-dom';
+import { fetchParticularNote, createNewNote, updateExistingNote, deleteNote} from '../../api/notes';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { Box, Button, Checkbox, TextField } from '@mui/material';
 import MainTitle from "../../components/MainTitle"
@@ -77,7 +77,6 @@ export default function NoteForm() {
     }
   });
   const [loading, setLoading] = useState<boolean>(true); // State to track loading status
-  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -109,6 +108,16 @@ export default function NoteForm() {
     } else {
       console.log('Calling the Create API', formData);
       createNewNote(formData);
+    }
+    window.location.href = '/';
+  };
+
+  const onDelete = () => {
+    if (id) {
+      console.log('Deleting Note');
+      deleteNote(id);
+    } else {
+      console.log('Cannot Delete New Note');
     }
     window.location.href = '/';
   };
@@ -156,8 +165,9 @@ export default function NoteForm() {
             />
           </Box>
           <ActionItemsInput control={control} />
-          <Box display="flex" justifyContent="end">
+          <Box display="flex" justifyContent="end" gap={1}>
             <Button type="submit" variant="contained">Submit</Button>
+            <Button type="submit" variant="contained" color='error' onClick={onDelete}>Delete Note</Button>            
           </Box>
         </form>
       </Box>

@@ -11,10 +11,11 @@ export type NoteType = {
     }[]
     __v: number
 }
-  
-export const fetchNotes = async () => {
+
+export const fetchNotes = async (queryParams: any = null) => {
     try {
-        const res = await fetch("/api");
+        const url = queryParams ? `/api?searchData=${queryParams}` : '/api';
+        const res = await fetch(url);
         const data: NoteType[] = await res.json();
 
         return {
@@ -77,6 +78,29 @@ export const updateExistingNote = async (body: NoteType, id: String) => {
                 'Content-Type': 'application/json' // Set content type to JSON
             },
             body: JSON.stringify(body),
+        });
+        const data: NoteType = await res.json();
+
+        return {
+            result: true,
+            data,
+        }
+    } catch (e) {
+        return {
+            result: false,
+            data: null,
+        }
+    }
+}
+
+export const deleteNote = async (id: String) => {
+    try {
+        const res = await fetch(`/api/${id}`, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json' // Set content type to JSON
+            },
+            body: JSON.stringify({}),
         });
         const data: NoteType = await res.json();
 
